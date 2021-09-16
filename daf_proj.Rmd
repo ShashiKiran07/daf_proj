@@ -21,7 +21,7 @@ disaster_data <- read_csv('https://www.fema.gov/api/open/v2/DisasterDeclarations
 allstate_data <- read_csv('https://query1.finance.yahoo.com/v7/finance/download/ALL?period1=944006400&period2=1631664000&interval=1d&events=history&includeAdjustedClose=true')
 allstate_data <- subset(allstate_data, select = c("Date","Open","High","Low","Close"))
 colnames(allstate_data) <- c("Date", "allstate_open", "allstate_high","allstate_low","allstate_close")
-head(allstate_data)
+(allstate_data)
 ```
 
 ```{r}
@@ -42,15 +42,15 @@ head(travellers_data)
 disaster_data <- subset(disaster_data, select = c("incidentType", "state", "declarationType","fyDeclared", "declarationDate", "incidentBeginDate", "incidentEndDate", "disasterCloseoutDate"))
 disaster_data <- disaster_data %>%
   distinct()
-disaster_data$declarationDate = as.Date(disaster_data$declarationDate)
+disaster_data$incidentBeginDate = as.Date(disaster_data$incidentBeginDate)
 disaster_data <- disaster_data %>%
-  filter(declarationDate>as.Date("2000-01-01"))
+  filter(incidentBeginDate>as.Date("2000-01-01"))
 disaster_data_all <- disaster_data %>% 
-  left_join(allstate_data, by=c("declarationDate" = "Date")) %>%
-  left_join(progressive_data, by=c("declarationDate" = "Date"))%>%
-  left_join(travellers_data, by=c("declarationDate" = "Date"))
+  left_join(allstate_data, by=c("incidentBeginDate" = "Date")) %>%
+  left_join(progressive_data, by=c("incidentBeginDate" = "Date"))%>%
+  left_join(travellers_data, by=c("incidentBeginDate" = "Date"))
+disaster_data_all<-na.omit((disaster_data_all))
 disaster_data_all
-
 ```
 
 ```{r}
@@ -80,6 +80,6 @@ dhsjsdfhsj
 
 
 
-
+fjjfjf
 
 
