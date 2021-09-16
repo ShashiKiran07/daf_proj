@@ -45,12 +45,12 @@ disaster_data <- disaster_data %>%
 disaster_data$incidentBeginDate = as.Date(disaster_data$incidentBeginDate)
 disaster_data <- disaster_data %>%
   filter(incidentBeginDate>as.Date("2000-01-01"))
-disaster_data_all <- disaster_data %>% 
+disaster_stock_data <- disaster_data %>% 
   left_join(allstate_data, by=c("incidentBeginDate" = "Date")) %>%
   left_join(progressive_data, by=c("incidentBeginDate" = "Date"))%>%
-  left_join(travellers_data, by=c("incidentBeginDate" = "Date"))
-disaster_data_all<-na.omit((disaster_data_all))
-disaster_data_all
+  left_join(travellers_data, by=c("incidentBeginDate" = "Date"))%>%
+  na.omit((disaster_data_all))
+disaster_stock_data
 ```
 
 ```{r}
@@ -69,17 +69,5 @@ disaster_data_all
 ```{r}
 
 ```
-
-fdskajglrskfdjgnbvdkhfadsjcgvbshjgrfvniksldmnvjahd
-
-
-dhsjsdfhsj
-
-
-
-
-
-
-fjjfjf
 
 
