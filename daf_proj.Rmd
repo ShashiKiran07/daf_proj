@@ -1,0 +1,83 @@
+---
+title: "Daf_proj"
+author: '*'
+date: "9/15/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r import library}
+library(tidyverse)
+```
+
+```{r}
+disaster_data <- read_csv('https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries.csv')
+```
+
+```{r}
+allstate_data <- read_csv('https://query1.finance.yahoo.com/v7/finance/download/ALL?period1=944006400&period2=1631664000&interval=1d&events=history&includeAdjustedClose=true')
+allstate_data <- subset(allstate_data, select = c("Date","Open","High","Low","Close"))
+colnames(allstate_data) <- c("Date", "allstate_open", "allstate_high","allstate_low","allstate_close")
+head(allstate_data)
+```
+
+```{r}
+progressive_data <- read_csv('https://query1.finance.yahoo.com/v7/finance/download/PGR?period1=944006400&period2=1631664000&interval=1d&events=history&includeAdjustedClose=true')
+progressive_data <- subset(progressive_data, select = c("Date","Open","High","Low","Close"))
+colnames(progressive_data) <- c("Date", "progressive_open", "progressive_high","progressive_low","progressive_close")
+head(progressive_data)
+```
+
+```{r}
+travellers_data <- read_csv('https://query1.finance.yahoo.com/v7/finance/download/TRV?period1=944006400&period2=1631664000&interval=1d&events=history&includeAdjustedClose=true')
+travellers_data <- subset(travellers_data, select = c("Date","Open","High","Low","Close"))
+colnames(travellers_data) <- c("Date", "travellers_open", "travellers_high","travellers_low","travellers_close")
+head(travellers_data)
+```
+
+```{r}
+disaster_data <- subset(disaster_data, select = c("incidentType", "state", "declarationType","fyDeclared", "declarationDate", "incidentBeginDate", "incidentEndDate", "disasterCloseoutDate"))
+disaster_data <- disaster_data %>%
+  distinct()
+disaster_data$declarationDate = as.Date(disaster_data$declarationDate)
+disaster_data <- disaster_data %>%
+  filter(declarationDate>as.Date("2000-01-01"))
+disaster_data_all <- disaster_data %>% 
+  left_join(allstate_data, by=c("declarationDate" = "Date")) %>%
+  left_join(progressive_data, by=c("declarationDate" = "Date"))%>%
+  left_join(travellers_data, by=c("declarationDate" = "Date"))
+disaster_data_all
+
+```
+
+```{r}
+# major_disaters <- disaster_data %>%
+#   filter(declarationType == 'DR')%>%
+#   filter(fyDeclared<1990)
+# major_disaters
+# tail(disaster_data)
+# summary(disaster_data)
+
+```
+```{r}
+# unique(disaster_data[c('incidentType')])
+```
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
