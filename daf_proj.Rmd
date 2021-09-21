@@ -4,47 +4,79 @@ author: '*'
 date: "9/15/2021"
 output: html_document
 ---
+#EFFECT OF DISASTERS ON THE STOCK OF INSURANCE COMPANIES
+
+#Short Description:- 
+In this project we are considering four datasets, the first dataset is "Disasters", in this dataset we are considering 5 disasters - Fire,Flood,Hurricane,Severe Storms and Snow. The second,third and fourth datasets are Stocks data for top 3 listed insurance companies - AllState,Progressive and Travellers. So taking stocks data into consideration we are analyzing how disasters effected the stocks prices from year 2000 -2020
+
+#Source:-
+FEMA(Federal Emergency Management Agency) Disaster Declarations Summary is a summarized dataset describing all federally declared disasters. This dataset lists all official FEMA Disaster Declarations, beginning with the first disaster declaration in 1953 and features all three disaster declaration types: major disaster, emergency, and fire management assistance. 
+'https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries.csv'
+Yahoo Finance - This is a media property that is part of Yahoo! network.It provides financial news, data and commentary including stock quotes, press releases, financial reports, and original content.
+'https://query1.finance.yahoo.com/v7/finance/download/ALL?period1=944006400&period2=1631664000&interval=1d&events=history&includeAdjustedClose=true'
+'https://query1.finance.yahoo.com/v7/finance/download/PGR?period1=944006400&period2=1631664000&interval=1d&events=history&includeAdjustedClose=true'
+'https://query1.finance.yahoo.com/v7/finance/download/TRV?period1=944006400&period2=1631664000&interval=1d&events=history&includeAdjustedClose=true'
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r import library}
+For this project, we need these three libraries, "Tidyverse" and "Janitor" for preprocessing and cleaning the data, "Ggrepel" for plotting the data.
+```{r importing libraries}
 library(tidyverse)
+library(janitor)
+library(ggrepel)
 ```
 
-```{r}
+#Loading Disasters dataset
+```{r disaster dataset}
 disaster_data <- read_csv('https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries.csv')
 ```
 
-```{r}
+#Loading AllState Stock dataset
+```{r AllState dataset}
 allstate_data <- read_csv('https://query1.finance.yahoo.com/v7/finance/download/ALL?period1=944006400&period2=1631664000&interval=1d&events=history&includeAdjustedClose=true')
 allstate_data <- subset(allstate_data, select = c("Date","Open","High","Low","Close"))
 colnames(allstate_data) <- c("Date", "allstate_open", "allstate_high","allstate_low","allstate_close")
-(allstate_data)
+head(allstate_data)
 ```
 
-```{r}
+Selected the columns that are needed for the visualizations and formed a subset using those columns. Renamed the columns according to our convenience
+
+
+#Loading Progressive Stock dataset
+```{r Progressive dataset}
 progressive_data <- read_csv('https://query1.finance.yahoo.com/v7/finance/download/PGR?period1=944006400&period2=1631664000&interval=1d&events=history&includeAdjustedClose=true')
 progressive_data <- subset(progressive_data, select = c("Date","Open","High","Low","Close"))
 colnames(progressive_data) <- c("Date", "progressive_open", "progressive_high","progressive_low","progressive_close")
 head(progressive_data)
 ```
 
-```{r}
+Selected the columns that are needed for the visualizations and formed a subset using those columns. Renamed the columns according to our convenience
+
+
+#Loading Travellers Stock dataset
+```{r Travellers dataset}
 travellers_data <- read_csv('https://query1.finance.yahoo.com/v7/finance/download/TRV?period1=944006400&period2=1631664000&interval=1d&events=history&includeAdjustedClose=true')
 travellers_data <- subset(travellers_data, select = c("Date","Open","High","Low","Close"))
 colnames(travellers_data) <- c("Date", "travellers_open", "travellers_high","travellers_low","travellers_close")
 head(travellers_data)
 ```
+Selected the columns that are needed for the visualizations and formed a subset using those columns. Renamed the columns according to our convenience
 
+
+#Loading Disaster dataset
 ```{r}
 disaster_data <- subset(disaster_data, select = c("incidentType", "state", "declarationType","fyDeclared", "declarationDate", "incidentBeginDate", "incidentEndDate", "disasterCloseoutDate"))
-disaster_data <- disaster_data %>%
-  distinct()
+disaster_data <- disaster_data %>%  distinct()
 disaster_data$incidentBeginDate = as.Date(disaster_data$incidentBeginDate)
-disaster_data <- disaster_data %>%
-  filter(incidentBeginDate>as.Date("2000-01-01"))
+disaster_data <- disaster_data %>% filter(incidentBeginDate>as.Date("2000-01-01"))
+```
+Selected the columns that are needed for the visualizations and formed a subset using those columns. To remove duplicate values distinct() function is used and filtered the values from the year 2000
+
+
+#Combinning Stock and Disaster datasets
+```{r}
 disaster_stock_data <- disaster_data %>% 
   left_join(allstate_data, by=c("incidentBeginDate" = "Date")) %>%
   left_join(progressive_data, by=c("incidentBeginDate" = "Date"))%>%
@@ -52,22 +84,70 @@ disaster_stock_data <- disaster_data %>%
   na.omit((disaster_data_all))
 disaster_stock_data
 ```
+Joining all the four datasets together on date into a single dataset.
 
 ```{r}
-# major_disaters <- disaster_data %>%
-#   filter(declarationType == 'DR')%>%
-#   filter(fyDeclared<1990)
-# major_disaters
-# tail(disaster_data)
-# summary(disaster_data)
-
+summ <- tabyl(disaster_stock_data,incidentType)
+summ <- summ %>% filter(n >50)
+```
+Till now we have loaded the datasets and filtered the data according to our suitability,
+The Number of Disasters occurred on each year
+```{r}
+count_incidents <-tabyl(disaster_stock_data, incidentType, fyDeclared)
+count_incidents <- disaster_stock_data %>% filter(incidentType== 'Fire' | incidentType== 'Flood' | incidentType== 'Hurricane' | incidentType== 'Severe Storm(s)' |incidentType== 'Snow') %>% group_by(fyDeclared)%>%  summarise(number = n())
+count_incidents
 ```
 ```{r}
-# unique(disaster_data[c('incidentType')])
+ggplot(data=count_incidents, aes(x=fyDeclared, y = number))+ ggtitle("Total disasters occured in each year")+
+    geom_line(color = "blue", linetype = 2)
+```
+
+
+What is the distribution of the natural calamities in the US from 2000 - Present
+```{r piechart}
+ggplot(summ, aes(x="", y=n, fill=incidentType ,inherit.aes = FALSE)) +
+ geom_bar(stat="identity", width=1, color="white") +
+ coord_polar("y", start=0) +
+ theme_void() + ggtitle("Distribution of natural calamities: 2000 - now")
+```
+
+#Impact of natural calamities on the three Insurance Company Stocks
+```{r}
+disaster_stock_data<- disaster_stock_data %>% mutate(dip_allstate = allstate_close - allstate_open)
+disaster_stock_data<- disaster_stock_data %>% mutate(dip_progressive = progressive_close- progressive_open )
+disaster_stock_data<-disaster_stock_data %>% mutate(dip_travellers = travellers_close - travellers_open)
+disaster_stock_data <- disaster_stock_data %>% mutate(dip = apply(disaster_stock_data[,c('dip_allstate','dip_progressive','dip_travellers')], 1, min, na.rm = TRUE))
+glimpse(disaster_stock_data)
+
 ```
 
 ```{r}
+list <- disaster_stock_data %>% filter(incidentType == c('Fire','Flood','Hurricane','Severe Storm(s)','Snow'))%>% group_by(incidentType) %>% summarise(mean_as = mean(dip_allstate), mean_tr = mean(dip_travellers), mean_pro = mean(dip_progressive))
+summ <- full_join(summ,list)
+summ
+```
+```{r}
+summ_p <- pivot_longer(summ,cols = c('mean_as','mean_tr','mean_pro'))
+ggplot(summ_p, aes(fill=name, y=value, x=incidentType)) + 
+    geom_bar(position="stack", stat="identity") + ggtitle("Insurance Stock reactions to Disasters")
 
 ```
+#Basic Linear Model of the data
+```{r}
+model <- lm(formula = n ~ mean_as+mean_tr+ mean_pro, data = summ)
+summary(model)
+```
+#Conclusions:-
+The most occurred disaster is Fire.
+Highest number of disasters occured in 2011 whereas least number of disasters occurred in 2021
+During Fire, Hurricane and Snow we have seen a raise in the Stocks for AllState and Progressive Insurance companies.
+In the time of flood and severe storms all the stocks of the three Insurance Companies are dropped.
+
+#Bias:-
+We considered the disasters that occurred more than 50 times.
+Weekends are not considered for our convenience as the markets are closed on weekends.
+
+
+
 
 
