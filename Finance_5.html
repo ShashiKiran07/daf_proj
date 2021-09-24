@@ -173,6 +173,10 @@ pre code {
 
 <div id="effect-of-disasters-on-the-insurance-stock" class="section level1">
 <h1>EFFECT OF DISASTERS ON THE INSURANCE STOCK</h1>
+<div id="github-link" class="section level2">
+<h2>Github link</h2>
+<p><a href="https://github.com/ShashiKiran07/daf_proj" class="uri">https://github.com/ShashiKiran07/daf_proj</a></p>
+</div>
 <div id="question-of-interest" class="section level2">
 <h2>Question of interest</h2>
 <ol style="list-style-type: decimal">
@@ -183,7 +187,7 @@ pre code {
 </div>
 <div id="short-description-" class="section level2">
 <h2>Short Description:-</h2>
-<p>In this project we are considering four datasets, the first dataset is “Disasters”, in this dataset we are considering 5 disasters - Fire,Flood,Hurricane,Severe Stroms and Snow. The second, third and fourth datasets are Stocks data for top 3 listed insurance companies - AllState,Progressive and Travellers. So taking stocks data into consideration we are analyzying how disasters effected the stocks prices from year 2000 -2020.</p>
+<p>In this project we are considering four datasets, the first dataset is “Disasters”, in this dataset we are considering 7 disasters - Fire, Flood, Hurricane, Storms, Severe Ice Storms, Biological and Snow. The second, third and fourth datasets are Stocks data for top 3 listed insurance companies - AllState, Progressive and Travelers. So taking stocks data into consideration we are analyzing how disasters effected the stocks prices from year 2000-present.</p>
 </div>
 <div id="source-" class="section level2">
 <h2>Source:-</h2>
@@ -196,7 +200,7 @@ pre code {
 <div id="libraries" class="section level3">
 <h3>Libraries</h3>
 <p>We used three R libraries for this project</p>
-<p><strong>tidyverse</strong> and <strong>janitor</strong> is used for cleaning and analysing the data, while <strong>ggrepel</strong> is used on top of ggplot to produce beautiful visualizations.</p>
+<p><strong>tidyverse</strong> and <strong>janitor</strong> is used for cleaning and analyzing the data, while <strong>ggrepel</strong> is used on top of ggplot to produce beautiful visualizations.</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
 <pre><code>## v ggplot2 3.3.5     v purrr   0.3.4
@@ -257,7 +261,7 @@ head(allstate_data)</code></pre>
 ## 4 1999-12-06          27            28           26.8           27  
 ## 5 1999-12-07          26.9          27.9         26.9           27  
 ## 6 1999-12-08          27            27.7         27             27.2</code></pre>
-<p>Selected the columns that are needed for the visualizations and formed a subset using those columns. Renamed the columns according to convenience</p>
+<p>Selected the columns that are needed for the visualizations and formed a subset using those columns. Renamed the columns according to our convenience</p>
 </div>
 <div id="loading-progressive-stock-dataset" class="section level3">
 <h3>Loading Progressive Stock dataset</h3>
@@ -286,9 +290,9 @@ head(progressive_data)</code></pre>
 ## 6 1999-12-08             6.23             6.29            5.99              6</code></pre>
 <p>Selected the columns that are needed for the visualizations and formed a subset using those columns. Renamed the columns according to our convenience</p>
 </div>
-<div id="loading-travellers-stock-dataset" class="section level3">
-<h3>Loading Travellers Stock dataset</h3>
-<pre class="r"><code>travellers_data &lt;- read_csv(&#39;https://query1.finance.yahoo.com/v7/finance/download/TRV?period1=944006400&amp;period2=1631664000&amp;interval=1d&amp;events=history&amp;includeAdjustedClose=true&#39;)</code></pre>
+<div id="loading-travelers-stock-dataset" class="section level3">
+<h3>Loading travelers Stock dataset</h3>
+<pre class="r"><code>travelers_data &lt;- read_csv(&#39;https://query1.finance.yahoo.com/v7/finance/download/TRV?period1=944006400&amp;period2=1631664000&amp;interval=1d&amp;events=history&amp;includeAdjustedClose=true&#39;)</code></pre>
 <pre><code>## Rows: 5482 Columns: 7</code></pre>
 <pre><code>## -- Column specification --------------------------------------------------------
 ## Delimiter: &quot;,&quot;
@@ -297,20 +301,20 @@ head(progressive_data)</code></pre>
 <pre><code>## 
 ## i Use `spec()` to retrieve the full column specification for this data.
 ## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code>travellers_data &lt;- subset(travellers_data, select = c(&quot;Date&quot;,&quot;Open&quot;,&quot;High&quot;,&quot;Low&quot;,&quot;Close&quot;))
+<pre class="r"><code>travelers_data &lt;- subset(travelers_data, select = c(&quot;Date&quot;,&quot;Open&quot;,&quot;High&quot;,&quot;Low&quot;,&quot;Close&quot;))
 
-colnames(travellers_data) &lt;- c(&quot;Date&quot;, &quot;travellers_open&quot;, &quot;travellers_high&quot;,&quot;travellers_low&quot;,&quot;travellers_close&quot;)
+colnames(travelers_data) &lt;- c(&quot;Date&quot;, &quot;travelers_open&quot;, &quot;travelers_high&quot;,&quot;travelers_low&quot;,&quot;travelers_close&quot;)
 
-head(travellers_data)</code></pre>
+head(travelers_data)</code></pre>
 <pre><code>## # A tibble: 6 x 5
-##   Date       travellers_open travellers_high travellers_low travellers_close
-##   &lt;date&gt;               &lt;dbl&gt;           &lt;dbl&gt;          &lt;dbl&gt;            &lt;dbl&gt;
-## 1 1999-12-01            30.4            31.2           30.2             30.9
-## 2 1999-12-02            31              31.5           31               31.5
-## 3 1999-12-03            32              32.9           31.6             31.8
-## 4 1999-12-06            31.9            31.9           30.8             31  
-## 5 1999-12-07            30.4            31.2           30.4             30.5
-## 6 1999-12-08            30.5            31.2           30.4             30.8</code></pre>
+##   Date       travelers_open travelers_high travelers_low travelers_close
+##   &lt;date&gt;              &lt;dbl&gt;          &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt;
+## 1 1999-12-01           30.4           31.2          30.2            30.9
+## 2 1999-12-02           31             31.5          31              31.5
+## 3 1999-12-03           32             32.9          31.6            31.8
+## 4 1999-12-06           31.9           31.9          30.8            31  
+## 5 1999-12-07           30.4           31.2          30.4            30.5
+## 6 1999-12-08           30.5           31.2          30.4            30.8</code></pre>
 <p>Selected the columns that are needed for the visualizations and formed a subset using those columns. Renamed the columns according to our convenience</p>
 </div>
 </div>
@@ -327,11 +331,11 @@ disaster_data &lt;- disaster_data %&gt;% filter(incidentBeginDate&gt;as.Date(&qu
 </div>
 <div id="combining-disaster-and-stock-datasets" class="section level2">
 <h2>Combining Disaster and Stock datasets</h2>
-<p>Joining all the four datasets to get into a single dataset, we are left joining all the datasets on the basis of dates the disasters occurred.</p>
+<p>Joining all the four datasets to get into a single dataset, we are left joining all the datasets on the basis of dates on which the disasters occurred.</p>
 <pre class="r"><code>disaster_stock_data &lt;- disaster_data %&gt;% 
   left_join(allstate_data, by=c(&quot;incidentBeginDate&quot; = &quot;Date&quot;)) %&gt;%
   left_join(progressive_data, by=c(&quot;incidentBeginDate&quot; = &quot;Date&quot;))%&gt;%
-  left_join(travellers_data, by=c(&quot;incidentBeginDate&quot; = &quot;Date&quot;))%&gt;%
+  left_join(travelers_data, by=c(&quot;incidentBeginDate&quot; = &quot;Date&quot;))%&gt;%
   na.omit((disaster_data_all))
 
 disaster_stock_data</code></pre>
@@ -352,8 +356,8 @@ disaster_stock_data</code></pre>
 ## #   incidentEndDate &lt;dttm&gt;, disasterCloseoutDate &lt;dttm&gt;, allstate_open &lt;dbl&gt;,
 ## #   allstate_high &lt;dbl&gt;, allstate_low &lt;dbl&gt;, allstate_close &lt;dbl&gt;,
 ## #   progressive_open &lt;dbl&gt;, progressive_high &lt;dbl&gt;, progressive_low &lt;dbl&gt;,
-## #   progressive_close &lt;dbl&gt;, travellers_open &lt;dbl&gt;, travellers_high &lt;dbl&gt;,
-## #   travellers_low &lt;dbl&gt;, travellers_close &lt;dbl&gt;</code></pre>
+## #   progressive_close &lt;dbl&gt;, travelers_open &lt;dbl&gt;, travelers_high &lt;dbl&gt;,
+## #   travelers_low &lt;dbl&gt;, travelers_close &lt;dbl&gt;</code></pre>
 <p>We are using the tabyl function in janitor package to find out how many times each disaster occurred in the timeframe we considered i.e (2000-present) and what is its percentage of occurrence. Also we are only considering the disasters that occurred more than 50 times for our project.</p>
 <pre class="r"><code># library(janitor)
 
@@ -406,9 +410,9 @@ ggplot(no_of_disasters %&gt;% arrange(desc(n)), aes(x=&quot;&quot;, y=n, fill=in
 
 disaster_stock_data&lt;- disaster_stock_data %&gt;% mutate(dip_progressive = progressive_close- progressive_open )
 
-disaster_stock_data&lt;-disaster_stock_data %&gt;% mutate(dip_travellers = travellers_close - travellers_open)
+disaster_stock_data&lt;-disaster_stock_data %&gt;% mutate(dip_travelers = travelers_close - travelers_open)
 
-disaster_stock_data &lt;- disaster_stock_data %&gt;% mutate(dip = apply(disaster_stock_data[,c(&#39;dip_allstate&#39;,&#39;dip_progressive&#39;,&#39;dip_travellers&#39;)], 1, min, na.rm = TRUE))
+disaster_stock_data &lt;- disaster_stock_data %&gt;% mutate(dip = apply(disaster_stock_data[,c(&#39;dip_allstate&#39;,&#39;dip_progressive&#39;,&#39;dip_travelers&#39;)], 1, min, na.rm = TRUE))
 
 glimpse(disaster_stock_data)</code></pre>
 <pre><code>## Rows: 1,189
@@ -429,16 +433,16 @@ glimpse(disaster_stock_data)</code></pre>
 ## $ progressive_high     &lt;dbl&gt; 6.083333, 5.557292, 5.473958, 4.500000, 5.515625,~
 ## $ progressive_low      &lt;dbl&gt; 5.890625, 5.416667, 5.322917, 4.312500, 5.328125,~
 ## $ progressive_close    &lt;dbl&gt; 5.890625, 5.494792, 5.390625, 4.343750, 5.333333,~
-## $ travellers_open      &lt;dbl&gt; 33.2500, 31.6250, 32.0000, 24.2500, 32.1250, 24.5~
-## $ travellers_high      &lt;dbl&gt; 33.2500, 32.4375, 32.3750, 24.5625, 32.8125, 24.6~
-## $ travellers_low       &lt;dbl&gt; 32.6250, 31.3125, 29.8125, 24.0625, 31.2500, 23.1~
-## $ travellers_close     &lt;dbl&gt; 33.0000, 32.1250, 30.5625, 24.2500, 31.3750, 23.6~
+## $ travelers_open       &lt;dbl&gt; 33.2500, 31.6250, 32.0000, 24.2500, 32.1250, 24.5~
+## $ travelers_high       &lt;dbl&gt; 33.2500, 32.4375, 32.3750, 24.5625, 32.8125, 24.6~
+## $ travelers_low        &lt;dbl&gt; 32.6250, 31.3125, 29.8125, 24.0625, 31.2500, 23.1~
+## $ travelers_close      &lt;dbl&gt; 33.0000, 32.1250, 30.5625, 24.2500, 31.3750, 23.6~
 ## $ dip_allstate         &lt;dbl&gt; -0.5000, -0.8125, -0.2500, -0.4375, -0.2500, -0.2~
 ## $ dip_progressive      &lt;dbl&gt; -0.161458, 0.041667, 0.046875, -0.156250, -0.1822~
-## $ dip_travellers       &lt;dbl&gt; -0.2500, 0.5000, -1.4375, 0.0000, -0.7500, -0.937~
+## $ dip_travelers        &lt;dbl&gt; -0.2500, 0.5000, -1.4375, 0.0000, -0.7500, -0.937~
 ## $ dip                  &lt;dbl&gt; -0.500000, -0.812500, -1.437500, -0.437500, -0.75~</code></pre>
 <p>Here we are creating the dataset mean_dip_rise which contains the mean dip or rise of a particular stock depending on the disaster, we are then joining that dataset with the no_of_disasters dataset we created which contains the total number of each disasters that occurred in the timeframe.</p>
-<pre class="r"><code>mean_dip_rise &lt;- disaster_stock_data %&gt;% filter(incidentType == c(&#39;Fire&#39;,&#39;Flood&#39;,&#39;Hurricane&#39;,&#39;Severe Storm(s)&#39;,&#39;Snow&#39;))%&gt;% group_by(incidentType) %&gt;% summarise(mean_as = mean(dip_allstate), mean_tr = mean(dip_travellers), mean_pro = mean(dip_progressive))</code></pre>
+<pre class="r"><code>mean_dip_rise &lt;- disaster_stock_data %&gt;% filter(incidentType == c(&#39;Fire&#39;,&#39;Flood&#39;,&#39;Hurricane&#39;,&#39;Severe Storm(s)&#39;,&#39;Snow&#39;))%&gt;% group_by(incidentType) %&gt;% summarise(mean_as = mean(dip_allstate), mean_tr = mean(dip_travelers), mean_pro = mean(dip_progressive))</code></pre>
 <pre><code>## Warning in incidentType == c(&quot;Fire&quot;, &quot;Flood&quot;, &quot;Hurricane&quot;, &quot;Severe Storm(s)&quot;, :
 ## longer object length is not a multiple of shorter object length</code></pre>
 <pre class="r"><code>no_of_disasters &lt;- full_join(no_of_disasters, mean_dip_rise)</code></pre>
@@ -489,7 +493,7 @@ summary(model)</code></pre>
 <h2>Conclusions:-</h2>
 <ol style="list-style-type: decimal">
 <li>During Fire and Hurricane insurance companies gain profit.</li>
-<li>When floods, severe storms and snow occurred stocks of progresive increased.</li>
+<li>When floods, severe storms and snow occurred stocks of Progressive increased.</li>
 <li>Allstate was affected the most by natural disasters.</li>
 <li>Insurance companies took better measures against fire and severe storms.</li>
 </ol>
@@ -508,9 +512,9 @@ summary(model)</code></pre>
 <ul>
 <li>Can we deduce why some natural disasters affected particular companies differently?
 <ol style="list-style-type: decimal">
-<li>Flood - progressive</li>
-<li>Severe storm(s) - all state</li>
-<li>Snow - travellers</li>
+<li>Flood - Progressive</li>
+<li>Severe storm(s) - Allstate</li>
+<li>Snow - Travelers</li>
 </ol></li>
 <li>Can we find out the best insurance company based on geographic data?</li>
 </ul>
